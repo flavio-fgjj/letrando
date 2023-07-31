@@ -1,0 +1,25 @@
+{
+  "extends": "@tsconfig/react-native/tsconfig.json",
+  "include": [
+    "app",
+    "tests",
+    ".eslintrc.js",
+    "index.d.ts",
+    "index.js",
+    "babel.config.js",
+  ],
+  "compilerOptions": {
+    "jsx": "react",
+    "types": ["react-native", "jest"],
+    "skipLibCheck": true,
+    "baseUrl": "./",
+    "paths": {
+      "@components/*": ["app/components/*"],
+      "@screens/*": ["app/screens/*"],
+      "@router/*": ["app/router/*"],
+      "@store/*": ["app/store/*"],
+      "@theme/*": ["app/theme/*"],
+      "@assets/*": ["app/assets/*"],
+    }
+  }
+}

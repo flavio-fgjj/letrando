@@ -1,0 +1,11 @@
+{
+  "name": "word-validation",
+  "version": "1.0.0",
+  "description": "api para verificar se é uma palavra válida",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Flavio Alvarenga",
+  "license": "ISC"
+}
