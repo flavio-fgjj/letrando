@@ -24,6 +24,7 @@ module.exports = {
           '@store': './app/store',
           '@shared': './app/shared',
           '@theme': './app/theme',
+          '@models': './app/models',
         },
       },
     ],

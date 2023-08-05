@@ -12,8 +12,10 @@ export const styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    // alignItems: 'center',
     paddingTop: 16,
+    flex: 1,
+    backgroundColor: '#a8896c'
   },
   viewHome: {
     marginTop: 35
