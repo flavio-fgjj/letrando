@@ -12,29 +12,24 @@ const { width: SIZE, height: HEIGHT } = Dimensions.get('window');
 
 export const styles = StyleSheet.create({
   boardContainer: {
-    //marginTop: adjust(20),
-    paddingVertical: 10,
+    paddingVertical: adjust(10),
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     flex: 1, 
-    backgroundColor: '#a8896c',
+    backgroundColor: colors.background,
     flexDirection: 'column'
   },
-  // abcButtonSize: {
-  //   width: wp(30),
-  //   height: hp(30),
-  //   maxWidth: wp(30),
-  //   maxHeight: hp(30),
-  // },
   square: {
     width: wp(SIZE * 0.1),
-    // marginBottom: 2,
-
+    // height: hp(HEIGHT * 0.1),
     borderWidth: wp(1),
-    borderColor: '#3C3C3C',
+    borderColor: colors.border,
     borderRadius: adjust(6),
 
     textAlign: 'center', 
-    overflow: 'hidden'
+    overflow: 'hidden', 
+    margin: adjust(2), 
+    textTransform: 'uppercase',
+    color: colors.text
   },
 });

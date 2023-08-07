@@ -14,6 +14,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     overflow: 'hidden',
+    paddingBottom: adjust(10)
   },
   abcButtonSize: {
     width: wp(30),
@@ -32,23 +33,16 @@ export const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-
     borderWidth: wp(1),
-    borderColor: '#5A5A5A',
+    borderColor: colors.border,
     borderRadius: adjust(100),
-    
-    // backgroundColor: '#D7C6AB',
 
-    //margin: adjust(2),
     marginBottom: adjust(5),
-
-    // pointerEvents: 'none',
-    // userSelect:'none',
   }, 
   letter: {
     fontSize: adjust(12),
     fontWeight: 'bold',
-    color: '#111D12',
+    color: colors.text,
     textTransform: 'uppercase'
   }
 });

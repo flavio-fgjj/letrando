@@ -1,41 +1,48 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { View, FlatList, KeyboardAvoidingView, TextInput, Keyboard, TouchableWithoutFeedback } from 'react-native';
 
 // style
 import {styles} from './styles';
 
+// model
+import { Words } from 'app/models/word.model';
+
 interface Props {
-	word: string
+	prop: Words
+}
+
+interface Aux {
+  id: number, 
+  row: number,
+  letter: string
 }
 
 export const Board = (props: Props) => {
+  const word: string = props.prop.word ?? '';
   const rows: number = 5;
-  const [keyForKeyboard, setKeyForKeyboard] = useState(0);
 
-  // const getNewKey = () => {
-  //   let total = keyForKeyboard.length
-  //   do {
-  //     let newNumber = Math.floor(Math.random() * 11);
-  //     let newNumberAlreadyExists = keyForKeyboard.includes(newNumber);
-  //     if (!newNumberAlreadyExists) {
-  //       keyForKeyboard.push(newNumber);
-  //     }
-  //   } while (keyForKeyboard.length > total)
-  // }
+  let list: Aux[] = [];
+  let wordArray = [...word];
+  let keys = wordArray.length * 5;
 
-  interface BoardRowKey {
-    key: Number
-  }
+  Array.from(Array(rows), (e, i) => {
+    for (let j: number = 0; j < wordArray.length; j++) {
+      list.push({
+        id: keys, 
+        letter: wordArray[j], 
+        row: i
+      });
+      keys--;
+    }
+  });
 
   const BoardRow = ({item}: any) => {
-    // console.log(item)
     return (
-      <KeyboardAvoidingView key={`${item.index}_${props.word}_${item.item}`}>
+      <KeyboardAvoidingView key={`${item.item.id}_${props.prop.word}`}>
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()} accessible={false}>
           <TextInput style={styles.square} showSoftInputOnFocus={false} />
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
-      
     )
   }
 
@@ -43,16 +50,15 @@ export const Board = (props: Props) => {
     <View style={styles.boardContainer}>
       {
         Array.from(Array(rows), (e, i) => {
-          let index = i;
-          let random = Math.floor(Math.random() * 11) * i * Math.floor(Math.random() * 50);
+          let newRow = list.filter(x => x.row === i);
           return (
             <FlatList
-              //key={`${i}_${props.word}`}
+              key={`${i.toString()}_${props.prop.word}`}
               horizontal={true}
-              data={[...props.word]}
-              keyExtractor={(letter) => `${random}` }
+              data={newRow}
+              keyExtractor={({id}) => `${id.toString()}_${props.prop.word}`}
               renderItem={(item) => <BoardRow item={item}/>}
-            />
+            />  
           )
         })
       }
