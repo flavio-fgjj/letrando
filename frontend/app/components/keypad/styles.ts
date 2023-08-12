@@ -42,7 +42,7 @@ export const styles = StyleSheet.create({
   letter: {
     fontSize: adjust(12),
     fontWeight: 'bold',
-    color: colors.text,
+    color: colors.border,
     textTransform: 'uppercase'
   }
 });

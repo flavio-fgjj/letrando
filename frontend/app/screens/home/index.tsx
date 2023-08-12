@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Dimensions } from 'react-native';
-
+import { View, Text, Image } from 'react-native';
 
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 // style
 import {styles} from './styles';
+const logo = require('../../assets/logo.png');
 
 // components
 import Loader from '@components/Loader';
@@ -49,13 +49,20 @@ export const Home = () => {
   
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Letrando</Text>
+      <View style={{display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}>
+        <Image
+          style={styles.tinyLogo}
+          source={logo}
+        />
+        <Text style={styles.title}>Letrando</Text>
+      </View>
 
       <Tab.Navigator style={[styles.tabNavigatorStyle, {backgroundColor: colors.background}]}
         screenOptions={() => ({
           headerShown: false,
           tabBarStyle: styles.tabBarStyle,
-          tabBarLabelStyle: styles.tabBarStyleSize
+          tabBarLabelStyle: styles.tabBarStyleSize, 
+          // tabBarIndicatorStyle: styles.tabBarIndicatorStyle
       })}
       >
         <Tab.Screen

@@ -21,7 +21,7 @@ export const styles = StyleSheet.create({
   },
   square: {
     width: wp(SIZE * 0.1),
-    // height: hp(HEIGHT * 0.1),
+    height: hp(HEIGHT * 0.1),
     borderWidth: wp(1),
     borderColor: colors.border,
     borderRadius: adjust(6),
