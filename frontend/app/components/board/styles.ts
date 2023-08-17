@@ -12,7 +12,8 @@ const { width: SIZE, height: HEIGHT } = Dimensions.get('window');
 
 export const styles = StyleSheet.create({
   boardContainer: {
-    paddingVertical: adjust(10),
+    paddingVertical: adjust(12),
+    // alignSelf: 'stretch',
     alignItems: 'center',
     justifyContent: 'space-between',
     flex: 1, 

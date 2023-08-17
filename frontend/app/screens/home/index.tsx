@@ -1,113 +1,151 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, Alert, ScrollView } from 'react-native';
 
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 // style
 import {styles} from './styles';
-const logo = require('../../assets/logo.png');
 
 // components
 import Loader from '@components/Loader';
 import { Keypad } from '@components/keypad/Keypad';
 import { Board } from '@components/board/board';
+import { Header } from '@components/header';
 
 // model
 import { Words } from 'app/models/word.model';
 import { colors } from '@theme/colors';
 
+// utils
+import { CleanWordUtil } from 'app/utils/cleanedWords';
+import { constColors, CLEAR, ENTER } from 'app/shared/constants';
 
 const Tab = createMaterialTopTabNavigator();
+const NUMBER_OF_TRIES = 5;
+
+const copyArray = (arr: any) => {
+  return [...arr.map((row: any) => [...row])];
+}
 
 export const Home = () => {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [selectedTab, setSelectedTab] = useState(0);
 
-  const [words, setWords] = useState<Array<Words>>([]);
+  const words2: string[] = ['castelo', 'gloria', 'ainda', 'bola', 'sol'];
+  const word: string = words2[0];
+  const arrayLetters = word.split('');
 
-  const words2: Array<string> = ['castelo', 'gloria', 'ainda', 'bola', 'sol'];
+  const [rows, setRows] = useState(
+    new Array(NUMBER_OF_TRIES).fill(new Array(arrayLetters.length).fill(""))
+  );
 
-  
-  useEffect(()=> {
-    let n: number = 0;
-    let w: Array<Words> = []
-    while (n < 5) {
-      w.push({
-        id: n, 
-        word: words2[n]
-      });
-      n++;
+  const [curTab, setCurTab] = useState(0);
+  const [curRow, setCurRow] = useState(0);
+  const [curCol, setCurCol] = useState(0);
+
+  const onKeyPressed = (key: string) => {
+    const updatedRows = copyArray(rows);
+
+    if (key === CLEAR) {
+      const prevCol = curCol - 1;
+      if (prevCol >= 0) {
+        updatedRows[curRow][prevCol] = "";
+        setRows(updatedRows);
+        setCurCol(prevCol);
+      }
+      return;
     }
-    setWords(w);
 
-    setLoading(false);
-  }, []);
+    if (key === ENTER) {
+      if (curCol === rows[0].length) {
+        setCurRow(curRow + 1);
+        setCurCol(0);
+      }
+
+      return;
+    }
+
+    if (curCol < rows[0].length) {
+      updatedRows[curRow][curCol] = key;
+      setRows(updatedRows);
+      setCurCol(curCol + 1);
+    }
+  }
+
+  const isCellActive = (row: number, col: number) => {
+    return row === curRow && col === curCol
+  }
+
+  const getCellBGColor = (row: number, col: number) => {
+    const letter: string = rows[row][col];
+
+    if (row > curRow) {
+      return colors.background;
+    }
+
+    if (letter === arrayLetters[col]) {
+      return constColors.primary;
+    }
+
+    if (arrayLetters.includes(letter)) {
+      return constColors.secondary;
+    }
+
+    if (row === curRow && letter === '') {
+      return colors.background;
+    }
+
+    return constColors.grey;
+  }
+
+  const greenCaps: string[] = rows.flatMap((row, i) => 
+    row.filter((cell: number, j: number) => getCellBGColor(i, j) === constColors.primary)
+  );
+
+  const yellowCaps: string[] = rows.flatMap((row, i) => 
+    row.filter((cell: number, j: number) => getCellBGColor(i, j) === constColors.secondary)
+  );
+
+  const greyCaps: string[] = rows.flatMap((row, i) => 
+    row.filter((cell: number, j: number) => getCellBGColor(i, j) === constColors.grey)
+  );
 
   if (loading) {
     return <Loader />
   }
 
-  
   return (
-    <View style={styles.container}>
-      <View style={{display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}>
-        <Image
-          style={styles.tinyLogo}
-          source={logo}
-        />
-        <Text style={styles.title}>Letrando</Text>
-      </View>
+    <>
+      <Header />
 
-      <Tab.Navigator style={[styles.tabNavigatorStyle, {backgroundColor: colors.background}]}
-        screenOptions={() => ({
-          headerShown: false,
-          tabBarStyle: styles.tabBarStyle,
-          tabBarLabelStyle: styles.tabBarStyleSize, 
-          // tabBarIndicatorStyle: styles.tabBarIndicatorStyle
-      })}
-      >
-        <Tab.Screen
-          name="❶"
-          children={()=>{
-            return(
-              <Board prop={words[0]} />
-            )
-          }}
-        />
-        <Tab.Screen 
-          name="❷" 
-          children={()=>{
-            return(
-              <Board prop={words[1]} />
-            )
-          }}
-        />
-        <Tab.Screen 
-          name="❸" 
-          children={()=>{
-            return(
-              <Board prop={words[2]} />
-            )
-          }}
-        />
-        <Tab.Screen 
-          name="❹" 
-          children={()=>{
-            return(
-              <Board prop={words[3]} />
-            )
-          }}
-        />
-        <Tab.Screen 
-          name="❺" 
-          children={()=>{
-            return(
-              <Board prop={words[4]} />
-            )
-          }}
-        />
-      </Tab.Navigator>
+      <ScrollView style={styles.map}>
+        {
+          rows.map((row, i) => (
+            <View style={styles.row} key={`${word}-row-${i}`}>
+              {
+                row.map((letter: string, j: number) => (
+                  <View
+                    key={`${word}-cell-${i}-${j}`}
+                    style={[
+                      styles.cell, 
+                      {
+                        borderColor: isCellActive(i, j) ? constColors.darkgrey : constColors.grey, 
+                        backgroundColor: getCellBGColor(i, j)
+                      }
+                    ]} 
+                  >
+                    <Text style={styles.cellText}>
+                      {letter.toUpperCase()}
+                    </Text>
+                  </View>
+                ))
+              }
+            </View>
+          ))
+        }
+      </ScrollView>
 
-      <Keypad />
-    </View>
+      <Keypad onKeyPressed={onKeyPressed} greenCaps={greenCaps} greyCaps={greyCaps} yellowCaps={yellowCaps} />
+    </>
   );
 }

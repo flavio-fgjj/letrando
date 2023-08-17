@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, FlatList, KeyboardAvoidingView, TextInput, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { View, FlatList, KeyboardAvoidingView, TextInput, Keyboard, TouchableWithoutFeedback, Text } from 'react-native';
 
 // style
 import {styles} from './styles';
@@ -40,7 +40,7 @@ export const Board = (props: Props) => {
     return (
       <KeyboardAvoidingView key={`${item.item.id}_${props.prop.word}`}>
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()} accessible={false}>
-          <TextInput style={styles.square} showSoftInputOnFocus={false} />
+          <TextInput style={styles.square} showSoftInputOnFocus={false} id={`${item.item.id}_${props.prop.word}`}>{}</TextInput>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
     )

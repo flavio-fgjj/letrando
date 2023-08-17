@@ -1,48 +1,34 @@
 import { StyleSheet, Dimensions } from 'react-native';
 
-// colors
-import {colors} from '../../theme/colors';
+// colors and constants
+import { keys, constColors } from "../../shared/constants";
 
 // utils
 import { adjust,hp,wp } from 'app/utils/adjustments';
 
-const windowHeight = Dimensions.get('window').height;
+const screenWidth = Dimensions.get("window").width;
+export const keyWidth = (screenWidth - 10) / keys[0].length;
+const keyHeight = keyWidth * 1.3;
 
 export const styles = StyleSheet.create({
   keypadContainer: {
-    display: 'flex', 
-    justifyContent: 'space-between',
+    alignSelf: "stretch",
+    marginTop: "auto",
+    justifyContent: 'center', 
     alignItems: 'center',
-    overflow: 'hidden',
-    paddingBottom: adjust(10)
+    flexDirection: 'column', 
   },
-  abcButtonSize: {
-    width: wp(30),
-    height: hp(30),
-    maxWidth: wp(30),
-    maxHeight: hp(30),
+  key: {
+    width: keyWidth - 4,
+    height: keyHeight - 4,
+    margin: 2,
+    borderRadius: 5,
+    backgroundColor: constColors.grey,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  enterButtonSize: {
-    width: wp(60),
-    height: hp(30),
-    maxWidth: wp(60),
-    maxHeight: hp(30),
-    marginLeft: adjust(10)
-  },
-  square: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: wp(1),
-    borderColor: colors.border,
-    borderRadius: adjust(100),
-
-    marginBottom: adjust(5),
-  }, 
-  letter: {
+  keyText: {
     fontSize: adjust(12),
     fontWeight: 'bold',
-    color: colors.border,
-    textTransform: 'uppercase'
   }
 });
