@@ -83,10 +83,12 @@ export const Home = () => {
       return colors.background;
     }
 
+    // green
     if (letter === arrayLetters[col]) {
       return constColors.primary;
     }
 
+    // yellow
     if (arrayLetters.includes(letter)) {
       return constColors.secondary;
     }

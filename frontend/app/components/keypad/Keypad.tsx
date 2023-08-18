@@ -36,6 +36,7 @@ export const Keypad = (
 
   const getKeyBGColor = (key: string) => {
     if (props.greenCaps.includes(key)) {
+      
       return constColors.primary;
     }
     if (props.yellowCaps.includes(key)) {
@@ -44,7 +45,13 @@ export const Keypad = (
     if (props.greyCaps.includes(key)) {
       return constColors.darkgrey;
     }
-    return colors.background;
+
+    if (key != "") {
+
+      return constColors.grey;
+    } else {
+      return colors.notification;
+    }
   };
 
   const KeypadRow = ({letter}: Letter) => {
