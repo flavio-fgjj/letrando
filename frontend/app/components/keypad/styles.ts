@@ -30,6 +30,6 @@ export const styles = StyleSheet.create({
   keyText: {
     fontSize: adjust(12),
     fontWeight: 'bold',
-    color: 'brown'
+    color: '#ff8f8f'
   }
 });

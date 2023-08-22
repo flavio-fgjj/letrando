@@ -12,7 +12,7 @@ const windowHeight = Dimensions.get('window').height;
 export const styles = StyleSheet.create({
   map: {
     alignSelf: 'stretch', 
-    height: 100
+    marginVertical: 20
   }, 
   row: {
     alignSelf: 'stretch', 

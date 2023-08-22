@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, Alert, ScrollView } from 'react-native';
+import { View, Text, Alert, ScrollView } from 'react-native';
+import Clipboard from '@react-native-community/clipboard';
 
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
@@ -18,13 +19,22 @@ import { colors } from '@theme/colors';
 
 // utils
 import { CleanWordUtil } from 'app/utils/cleanedWords';
-import { constColors, CLEAR, ENTER } from 'app/shared/constants';
+import { constColors, CLEAR, ENTER, colorsToEmoji } from 'app/shared/constants';
 
 const Tab = createMaterialTopTabNavigator();
 const NUMBER_OF_TRIES = 5;
 
 const copyArray = (arr: any) => {
   return [...arr.map((row: any) => [...row])];
+}
+
+const getDayOfTheYear = () => {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), 0, 0);
+  const diff = now.valueOf() - start.valueOf();
+  const oneDay = 1000 * 60 * 60 * 24;
+  const day = Math.floor(diff / oneDay);
+  return day;
 }
 
 export const Home = () => {
@@ -42,8 +52,52 @@ export const Home = () => {
   const [curTab, setCurTab] = useState(0);
   const [curRow, setCurRow] = useState(0);
   const [curCol, setCurCol] = useState(0);
+  const [gameState, setGameState] = useState('playing'); // won, lost, playing
+
+  useEffect(() => {
+    if (curRow > 0) {
+      checkGameState();
+    }
+  }, [curRow]);
+
+  const checkGameState = () => {
+    if (checkIfWon() && gameState !== 'won') {
+      Alert.alert("Uhuul", "Você venceu!!!", [{text: 'Share', onPress: shareScore}]);
+      setGameState("won");
+    } else if (checkIfLost() && gameState !== 'lost') {
+      Alert.alert("Meh", "Tente novamente amanhã!!!");
+      setGameState("lost");
+    }
+  }
+
+  const shareScore = () => {
+    const score = rows
+      .map((row, i) => 
+        row.map((cell: string, j: number) => colorsToEmoji[getCellBGColor(i,j)]).join("")
+      )
+      .filter((row) => row)
+      .join("\n");
+
+    const textToShare = `Me desempenho no Letrando! :) \n\n ${score}`;
+    Clipboard.setString(textToShare);
+    Alert.alert("Resultado copiado!", "Compartilhe nas suas redes! :)");
+  }
+
+  const checkIfWon = () => {
+    const row = rows[curRow -1];
+
+    return row.every((letter: string, i: number) => letter === arrayLetters[i]);
+  }
+
+  const checkIfLost = () => {
+    return !checkIfWon() && curRow === rows.length;
+  }
 
   const onKeyPressed = (key: string) => {
+    if (gameState !== 'playing') {
+      return;
+    }
+
     const updatedRows = copyArray(rows);
 
     if (key === CLEAR) {
