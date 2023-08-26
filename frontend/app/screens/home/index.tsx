@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Alert, ScrollView } from 'react-native';
+import { View, Text, Alert, ScrollView, Pressable } from 'react-native';
 import Clipboard from '@react-native-community/clipboard';
 
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
@@ -20,6 +20,10 @@ import { colors } from '@theme/colors';
 // utils
 import { CleanWordUtil } from 'app/utils/cleanedWords';
 import { constColors, CLEAR, ENTER, colorsToEmoji } from 'app/shared/constants';
+
+// store
+import useGlobalStore from '@store/word';
+const { words, add, update } = useGlobalStore();
 
 const Tab = createMaterialTopTabNavigator();
 const NUMBER_OF_TRIES = 5;
@@ -173,6 +177,12 @@ export const Home = () => {
   return (
     <>
       <Header />
+
+      <View style={{flexDirection: 'row', padding: 5}}>
+        <Pressable><Text style={styles.controlText}>{'<'}</Text></Pressable>
+        <Text style={styles.controlText}> de </Text>
+        <Pressable><Text style={styles.controlText}>{'>'}</Text></Pressable>
+      </View>
 
       <ScrollView style={styles.map}>
         {

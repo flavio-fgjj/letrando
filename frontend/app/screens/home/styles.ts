@@ -56,5 +56,9 @@ export const styles = StyleSheet.create({
   tabBarStyleSize: {
     fontSize: adjust(30),
     color: colors.border
+  },
+  controlText: {
+    color: colors.title,
+    fontSize: adjust(32),
   }
 });

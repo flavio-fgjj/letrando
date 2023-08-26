@@ -9,7 +9,6 @@ import { ENTER, CLEAR, keys, constColors } from '../../shared/constants';
 import { colors } from '@theme/colors';
 
 interface Props {
-  // onKeyPress: { onKeyPress: (letter: string) => void },
   onKeyPressed: (letter: string) => void;
 	greenCaps: string[];
   yellowCaps: string[];
@@ -17,18 +16,11 @@ interface Props {
 }
 
 
-export const Keypad = (
-    // { onKeyPress }: { onKeyPress: (letter: string) => void },
-    props: Props
-  ) => {
+export const Keypad = (props: Props) => {
 
   interface Letter {
     letter: string
   }
-
-  // const keyboardFirstRow: string[] = ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'];
-  // const keyboardSecondRow: string[] = ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'del'];
-  // const keyboardThirdRow: string[] = ['z', 'x', 'c', 'v', 'b', 'n', 'm', 'enter'];
 
   const isLongButton = (key: string) => {
     return key === ENTER || key === CLEAR;
