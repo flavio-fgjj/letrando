@@ -138,7 +138,8 @@ export const Home = () => {
     const letter: string = rows[row][col];
 
     if (row > curRow) {
-      return colors.background;
+      //return colors.background;
+      return constColors.grey;
     }
 
     // green
@@ -178,11 +179,11 @@ export const Home = () => {
     <>
       <Header />
 
-      <View style={{flexDirection: 'row', padding: 5}}>
+      {/* <View style={{flexDirection: 'row', padding: 5}}>
         <Pressable><Text style={styles.controlText}>{'<'}</Text></Pressable>
         <Text style={styles.controlText}> de </Text>
         <Pressable><Text style={styles.controlText}>{'>'}</Text></Pressable>
-      </View>
+      </View> */}
 
       <ScrollView style={styles.map}>
         {
