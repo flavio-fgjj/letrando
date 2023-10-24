@@ -1,8 +1,9 @@
-const http = require('http')
-const debug = require('debug')('letrando:server')
+require('dotenv').config()
 const app = require('../src/app')
+const debug = require('debug')('letrando:server')
+const http = require('http')
 
-const port = normalizePort(process.env.PORT || '3005')
+const port = normalizePort(process.env.PORT || '3000')
 app.set('port', port)
 
 const server = http.createServer(app)
@@ -10,8 +11,7 @@ const server = http.createServer(app)
 server.listen(port)
 server.on('error', onError)
 server.on('listening', onListening)
-console.log('API running at port ' + port)
-
+console.log('API rodando na porta ' + port)
 
 function normalizePort(val) {
   const port = parseInt(val, 10)
@@ -29,7 +29,7 @@ function normalizePort(val) {
 
 function onError(error) {
   if (error.syscall !== 'listen') {
-    throw error;
+    throw error
   }
 
   const bind = typeof port === 'string'
@@ -51,9 +51,9 @@ function onError(error) {
 }
 
 function onListening() {
-  const addr = server.address();
+  const addr = server.address()
   const bind = typeof addr === 'string'
     ? 'pipe ' + addr
-    : 'port ' + addr.port;
+    : 'port ' + addr.port
   debug('Listening on ' + bind)
 }
