@@ -1,0 +1,4 @@
+# Return word
+GET http://localhost:3000/word/vida
+Content-Type: application/json
+###
