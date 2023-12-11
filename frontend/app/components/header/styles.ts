@@ -1,22 +1,23 @@
-import { StyleSheet, Dimensions } from 'react-native';
+import {StyleSheet} from 'react-native';
 
 // colors
 import {colors} from '../../theme/colors';
 
 // utils
-import { adjust,hp,wp } from 'app/utils/adjustments';
+import {adjust, hp, wp} from 'app/utils/adjustments';
 
 export const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center', 
-    flexDirection: 'row'
+    justifyContent: 'center',
+    flexDirection: 'row',
+    marginTop: adjust(8),
   },
   title: {
     fontWeight: 'bold',
     color: colors.title,
     fontSize: adjust(32),
     textAlign: 'center',
-    letterSpacing: adjust(7)
+    letterSpacing: adjust(7),
   },
   tinyLogo: {
     width: wp(60),

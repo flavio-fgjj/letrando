@@ -1,64 +1,117 @@
-import { StyleSheet, Dimensions } from 'react-native';
+import {StyleSheet, Dimensions} from 'react-native';
 
 // colors
 import {colors} from '../../theme/colors';
 
 // utils
-import { adjust,hp,wp } from 'app/utils/adjustments';
-import { constColors } from 'app/shared/constants';
+import {adjust, hp, wp} from 'app/utils/adjustments';
+import {constColors} from 'app/shared/constants';
 
 const windowHeight = Dimensions.get('window').height;
 
 export const styles = StyleSheet.create({
   map: {
-    alignSelf: 'stretch', 
-    marginVertical: 20
-  }, 
+    alignSelf: 'stretch',
+    marginVertical: adjust(20),
+  },
+  header: {
+    color: 'black',
+    fontSize: adjust(18),
+    fontWeight: 'bold',
+  },
   row: {
-    alignSelf: 'stretch', 
+    alignSelf: 'stretch',
     flexDirection: 'row',
-    justifyContent: 'center'
-  }, 
+    justifyContent: 'center',
+  },
   cell: {
-    borderWidth: 3, 
-    //borderColor: constColors.lightgrey, 
-    flex: 1, 
-    maxWidth: 40,
-    aspectRatio: 1, 
-    borderRadius: 20,
-    margin: 3,
-    justifyContent: 'center', 
-    alignItems: 'center'
+    //borderWidth: wp(2),
+    //borderColor: constColors.lightgrey,
+    flex: 1,
+    maxWidth: wp(40),
+    aspectRatio: 1,
+    borderRadius: adjust(8),
+    margin: adjust(3),
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   cellText: {
-    color: constColors.black, 
-    fontWeight: 'bold', 
-    fontSize: 20
+    color: constColors.black,
+    fontWeight: 'bold',
+    fontSize: adjust(20),
   },
 
-  tabNavigatorStyle: {
-    backgroundColor: colors.background, 
-    alignSelf: "stretch",
-    marginTop: "auto",
-    justifyContent: 'center', 
+  // tabNavigatorStyle: {
+  //   backgroundColor: colors.background,
+  //   alignSelf: 'stretch',
+  //   marginTop: 'auto',
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  //   flexDirection: 'column',
+  // },
+  // tabBarStyle: {
+  //   backgroundColor: colors.background,
+  //   borderTopWidth: adjust(0),
+  //   borderRadius: adjust(6),
+  // },
+  // tabBarIndicatorStyle: {
+  //   borderColor: colors.border,
+  //   // backgroundColor: colors.turquoise,
+  // },
+  // tabBarStyleSize: {
+  //   fontSize: adjust(30),
+  //   color: colors.border,
+  // },
+  // controlText: {
+  //   color: colors.title,
+  //   fontSize: adjust(32),
+  // },
+
+  wordPlacar: {
+    alignSelf: 'center',
+    paddingVertical: 20,
+    flexDirection: 'column',
+  },
+  wordPlacarTitle: {
+    color: 'black',
+    fontSize: 18,
+    fontWeight: 'bold',
+    paddingBottom: 10,
+  },
+  wordPlacarInfo: {
+    color: 'black',
+  },
+  paginationContainer: {
+    //flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'column', 
+    paddingVertical: adjust(5),
+    paddingHorizontal: adjust(5),
+    // backgroundColor: 'transparent',
   },
-  tabBarStyle: {
-    backgroundColor: colors.background,
-    borderTopWidth: adjust(0),
-    borderRadius: adjust(6),
+  paginationButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: wp(40),
+    height: hp(40),
+    borderRadius: adjust(20),
+    marginHorizontal: adjust(4),
+    backgroundColor: constColors.grey,
   },
-  tabBarIndicatorStyle: {
-    borderColor: colors.border,
-    // backgroundColor: colors.turquoise,
+  paginationButtonActive: {
+    backgroundColor: '#22c55d',
+    width: wp(50),
+    height: hp(50),
+    borderRadius: adjust(25),
   },
-  tabBarStyleSize: {
-    fontSize: adjust(30),
-    color: colors.border
+  badge: {
+    position: 'absolute',
+    top: -2,
+    right: -2,
+    //paddingHorizontal: 5,
   },
-  controlText: {
-    color: colors.title,
-    fontSize: adjust(32),
-  }
+  textPagination: {
+    color: 'white',
+  },
 });

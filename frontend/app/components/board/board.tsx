@@ -1,21 +1,42 @@
 import React from 'react';
-import { View, FlatList, KeyboardAvoidingView, TextInput, Keyboard, TouchableWithoutFeedback, Text } from 'react-native';
+import {
+  View,
+  FlatList,
+  KeyboardAvoidingView,
+  TextInput,
+  Keyboard,
+  TouchableWithoutFeedback,
+} from 'react-native';
 
 // style
 import {styles} from './styles';
 
 // model
-import { Words } from 'app/models/word.model';
+import {Words} from 'app/models/word.model';
 
 interface Props {
-	prop: Words
+  prop: Words;
 }
 
 interface Aux {
-  id: number, 
-  row: number,
-  letter: string
+  id: number;
+  row: number;
+  letter: string;
 }
+
+const BoardRow = (id: any) => {
+  return (
+    <KeyboardAvoidingView key={id}>
+      <TouchableWithoutFeedback
+        onPress={() => Keyboard.dismiss()}
+        accessible={false}>
+        <TextInput style={styles.square} showSoftInputOnFocus={false} id={id}>
+          {}
+        </TextInput>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
+  );
+};
 
 export const Board = (props: Props) => {
   const word: string = props.prop.word ?? '';
@@ -28,40 +49,30 @@ export const Board = (props: Props) => {
   Array.from(Array(rows), (e, i) => {
     for (let j: number = 0; j < wordArray.length; j++) {
       list.push({
-        id: keys, 
-        letter: wordArray[j], 
-        row: i
+        id: keys,
+        letter: wordArray[j],
+        row: i,
       });
       keys--;
     }
   });
 
-  const BoardRow = ({item}: any) => {
-    return (
-      <KeyboardAvoidingView key={`${item.item.id}_${props.prop.word}`}>
-        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()} accessible={false}>
-          <TextInput style={styles.square} showSoftInputOnFocus={false} id={`${item.item.id}_${props.prop.word}`}>{}</TextInput>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
-    )
-  }
-
   return (
     <View style={styles.boardContainer}>
-      {
-        Array.from(Array(rows), (e, i) => {
-          let newRow = list.filter(x => x.row === i);
-          return (
-            <FlatList
-              key={`${i.toString()}_${props.prop.word}`}
-              horizontal={true}
-              data={newRow}
-              keyExtractor={({id}) => `${id.toString()}_${props.prop.word}`}
-              renderItem={(item) => <BoardRow item={item}/>}
-            />  
-          )
-        })
-      }
+      {Array.from(Array(rows), (e, i) => {
+        let newRow = list.filter(x => x.row === i);
+        return (
+          <FlatList
+            key={`${i.toString()}_${word}`}
+            horizontal={true}
+            data={newRow}
+            keyExtractor={({id}) => `${id.toString()}_${word}`}
+            renderItem={(item: any) => (
+              <BoardRow id={`${item.item.id}_${word}`} />
+            )}
+          />
+        );
+      })}
     </View>
-	);
-}
+  );
+};
