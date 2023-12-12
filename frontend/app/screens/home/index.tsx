@@ -1,9 +1,9 @@
 /* eslint-disable prettier/prettier */
 import React, {useEffect, useState} from 'react';
-import {View, Text, Alert, ScrollView, Pressable, TouchableOpacity} from 'react-native';
+import {View, Text, Alert, ScrollView, TouchableOpacity} from 'react-native';
 import Clipboard from '@react-native-community/clipboard';
-
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+// import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 // style
 import {styles} from './styles';
@@ -15,7 +15,7 @@ import {Board} from '@components/board/board';
 import {Header} from '@components/header';
 
 // model
-import {Words} from 'app/models/word.model';
+import {Words, WordsStorage} from 'app/models/word.model';
 import {colors} from '@theme/colors';
 
 // utils
@@ -23,13 +23,14 @@ import {CleanWordUtil} from 'app/utils/cleanedWords';
 import {constColors, CLEAR, ENTER, colorsToEmoji} from 'app/shared/constants';
 import {adjust} from 'app/utils/adjustments';
 
-// store
-import useGlobalStore from '@store/word';
+// // store
+// import useGlobalStore from '@store/word';
 
 
-const Tab = createMaterialTopTabNavigator();
+// const Tab = createMaterialTopTabNavigator();
 const NUMBER_OF_TRIES = 5;
 const NUMBER_OF_WORDS = 4;
+const STORAGE_KEY = '@letrando';
 
 const copyArray = (arr: any) => {
   return [...arr.map((row: any) => [...row])];
@@ -45,29 +46,183 @@ const getDayOfTheYear = () => {
 };
 
 export const Home = () => {
-  const {words, add, update} = useGlobalStore();
+  //const {words, add, update} = useGlobalStore();
 
   const [loading, setLoading] = useState(false);
-  const [selectedTab, setSelectedTab] = useState(0);
+  // const [selectedTab, setSelectedTab] = useState(0);
 
-  const words2: string[] = ['castelo', 'gloria', 'ainda', 'bola', 'sol'];
-  const word: string = words2[0];
-  const arrayLetters = word.split('');
+  const words: string[] = ['castelo', 'gloria', 'ainda', 'bola', 'sol'];
+  // const word: string = words[0];
+  // const arrayLetters = word.split('');
 
-  const [rows, setRows] = useState(
-    new Array(NUMBER_OF_TRIES).fill(new Array(arrayLetters.length).fill(''))
-  );
+  const [rows, setRows] = useState<[[]]>([[]]);
 
   const [curTab, setCurTab] = useState(0);
   const [curRow, setCurRow] = useState(0);
   const [curCol, setCurCol] = useState(0);
   const [gameState, setGameState] = useState('playing'); // won, lost, playing
+  const [store, setStore] = useState<WordsStorage>();
+  const [curWord, setCurWord] = useState('');
+  const [arrayLetters, setArrayLetters] = useState<string[]>([]);
+
+  useEffect(() => {
+    findStorage();
+  }, []);
+
+  useEffect(() => {
+  }, [rows]);
+
+  useEffect(() => {
+    if (store) {
+      setActualPage(curTab);
+    }
+  }, [curTab]);
+
+  const setActualPage = (n: number = 0) => {
+    switch (n) {
+      case 0:
+        setCurRow(store?.word_0?.answers ?? 0);
+        setRows(store?.word_0?.tries ?? [[]]);
+        setCurWord(store?.word_0?.word || '');
+        setArrayLetters(store?.word_0?.word?.split('') ?? ['']);
+        break;
+      case 1:
+        setCurRow(store?.word_1?.answers ?? 0);
+        setRows(store?.word_1?.tries ?? [[]]);
+        setCurWord(store?.word_1?.word || '');
+        setArrayLetters(store?.word_1?.word?.split('') ?? ['']);
+        break;
+      case 2:
+        setCurRow(store?.word_2?.answers ?? 0);
+        setRows(store?.word_2?.tries ?? [[]]);
+        setCurWord(store?.word_2?.word || '');
+        setArrayLetters(store?.word_2?.word?.split('') ?? ['']);
+        break;
+      case 3:
+        setCurRow(store?.word_3?.answers ?? 0);
+        setRows(store?.word_3?.tries ?? [[]]);
+        setCurWord(store?.word_3?.word || '');
+        setArrayLetters(store?.word_3?.word?.split('') ?? ['']);
+        break;
+      case 4:
+        setCurRow(store?.word_4?.answers ?? 0);
+        setRows(store?.word_4?.tries ?? [[]]);
+        setCurWord(store?.word_4?.word || '');
+        setArrayLetters(store?.word_4?.word?.split('') ?? ['']);
+        break;
+    }
+  };
 
   useEffect(() => {
     if (curRow > 0) {
       checkGameState();
     }
   }, [curRow]);
+
+  const findStorage = async () => {
+    try {
+      const jsonValue = await AsyncStorage.getItem(STORAGE_KEY);
+      if (jsonValue != null) {
+        let aux: WordsStorage = JSON.parse(jsonValue);
+        let dt = new Date();
+        if (aux?.date?.toString().substring(0, 10) !== dt.toISOString().substring(0, 10)) {
+
+          if (aux.word_0?.status === 'playing') {
+            const spl = aux.word_0.word !== undefined ? aux.word_0.word.split('') : [''];
+            setCurWord(aux?.word_0?.word || '');
+            setArrayLetters(spl);
+            setRows(new Array(NUMBER_OF_TRIES).fill(new Array(spl.length).fill('')));
+            setCurRow(0);
+          } else if (aux.word_1?.status === 'playing') {
+            const spl = aux.word_1.word !== undefined ? aux.word_1.word.split('') : [''];
+            setCurWord(aux?.word_1?.word || '');
+            setArrayLetters(aux.word_1.word !== undefined ? aux.word_1.word.split('') : ['']);
+            setRows(new Array(NUMBER_OF_TRIES).fill(new Array(spl.length).fill('')));
+            setCurRow(1);
+          } else if (aux.word_2?.status === 'playing') {
+            const spl = aux.word_2.word !== undefined ? aux.word_2.word.split('') : [''];
+            setCurWord(aux?.word_2?.word || '');
+            setArrayLetters(aux.word_2.word !== undefined ? aux.word_2.word.split('') : ['']);
+            setRows(new Array(NUMBER_OF_TRIES).fill(new Array(spl.length).fill('')));
+            setCurRow(2);
+          } else if (aux.word_3?.status === 'playing') {
+            const spl = aux.word_3.word !== undefined ? aux.word_3.word.split('') : [''];
+            setCurWord(aux?.word_3?.word || '');
+            setArrayLetters(aux.word_3.word !== undefined ? aux.word_3.word.split('') : ['']);
+            setRows(new Array(NUMBER_OF_TRIES).fill(new Array(spl.length).fill('')));
+            setCurRow(3);
+          } else if (aux.word_4?.status === 'playing') {
+            const spl = aux.word_4.word !== undefined ? aux.word_4.word.split('') : [''];
+            setCurWord(aux?.word_4?.word || '');
+            setArrayLetters(aux.word_4.word !== undefined ? aux.word_4.word.split('') : ['']);
+            setRows(new Array(NUMBER_OF_TRIES).fill(new Array(spl.length).fill('')));
+            setCurRow(4);
+          }
+        }
+
+        setStore(aux);
+      } else {
+        let dt = new Date();
+        // get words of the day
+        let aux: WordsStorage = {
+          date: dt.toISOString(),
+          words: words,
+          status: 'playing',
+          word_0: {
+            word: words[0],
+            status: 'playing',
+            tries: new Array(NUMBER_OF_TRIES).fill(new Array(words[0].length).fill('')),
+            answers: 0,
+          },
+          word_1: {
+            word: words[1],
+            status: 'playing',
+            tries: new Array(NUMBER_OF_TRIES).fill(new Array(words[1].length).fill('')),
+            answers: 0,
+          },
+          word_2: {
+            word: words[2],
+            status: 'playing',
+            tries: new Array(NUMBER_OF_TRIES).fill(new Array(words[2].length).fill('')),
+            answers: 0,
+          },
+          word_3: {
+            word: words[3],
+            status: 'playing',
+            tries: new Array(NUMBER_OF_TRIES).fill(new Array(words[3].length).fill('')),
+            answers: 0,
+          },
+          word_4: {
+            word: words[4],
+            status: 'playing',
+            tries: new Array(NUMBER_OF_TRIES).fill(new Array(words[4].length).fill('')),
+            answers: 0,
+          },
+        };
+
+        const spl = aux !== undefined ? aux.word_0?.word?.split('') : [''];
+        // setLoading(true);
+        setCurRow(0);
+        setCurWord(aux?.word_0?.word || '');
+        setArrayLetters(spl ?? ['']);
+        setRows(new Array(NUMBER_OF_TRIES).fill(new Array(spl?.length).fill('')));
+
+        setStore(aux);
+      }
+
+    } catch (e) {
+      //
+    }
+  };
+
+  const storeData = async (value: any) => {
+    try {
+      const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem(STORAGE_KEY, jsonValue);
+    } catch (e) {
+      // saving error
+    }
+  };
 
   const checkGameState = () => {
     if (checkIfWon() && gameState !== 'won') {
@@ -81,7 +236,7 @@ export const Home = () => {
 
   const shareScore = () => {
     const score = rows
-      .map((row, i) =>
+      .map((row: any, i) =>
         row.map((cell: string, j: number) => colorsToEmoji[getCellBGColor(i,j)]).join('')
       )
       .filter((row) => row)
@@ -93,9 +248,15 @@ export const Home = () => {
   };
 
   const checkIfWon = () => {
-    const row = rows[curRow - 1];
+    // if (rows.length === 0) {
+    //   return false;
+    // }
+    console.log('rows', rows);
+    console.log('curRow', curRow);
+    console.log(rows[curRow - 1]);
+    const row: any = rows[curRow - 1];
 
-    return row.every((letter: string, i: number) => letter === arrayLetters[i]);
+    return row?.every((letter: string, i: number) => letter === arrayLetters[i]);
   };
 
   const checkIfLost = () => {
@@ -107,7 +268,7 @@ export const Home = () => {
       return;
     }
 
-    const updatedRows = copyArray(rows);
+    const updatedRows: any = copyArray(rows);
 
     if (key === CLEAR) {
       const prevCol = curCol - 1;
@@ -123,6 +284,7 @@ export const Home = () => {
       if (curCol === rows[0].length) {
         setCurRow(curRow + 1);
         setCurCol(0);
+        // set storage
       }
 
       return;
@@ -164,15 +326,45 @@ export const Home = () => {
     return '#FF4500';
   };
 
-  const greenCaps: string[] = rows.flatMap((row, i) =>
+  // const greenCaps = (): string[] => {
+  //   if (rows) {
+  //     return rows.flatMap((row: [], i: number) =>
+  //       row.filter((cell: number, j: number) => getCellBGColor(i, j) === constColors.primary)
+  //     );
+  //   }
+
+  //   return [''];
+  // };
+
+  const greenCaps: string[] = rows.flatMap((row: [], i: number) =>
     row.filter((cell: number, j: number) => getCellBGColor(i, j) === constColors.primary)
   );
 
-  const yellowCaps: string[] = rows.flatMap((row, i) =>
+  // const yellowCaps = () => {
+  //   if (rows) {
+  //     return rows.flatMap((row: [], i: number) =>
+  //       row.filter((cell: number, j: number) => getCellBGColor(i, j) === constColors.secondary)
+  //     );
+  //   }
+
+  //   return null;
+  // };
+
+  const yellowCaps: string[] = rows.flatMap((row: [], i: number) =>
     row.filter((cell: number, j: number) => getCellBGColor(i, j) === constColors.secondary)
   );
 
-  const greyCaps: string[] = rows.flatMap((row, i) =>
+  // const greyCaps = () => {
+  //   if (rows) {
+  //     return rows.flatMap((row: [], i: number) =>
+  //       row.filter((cell: number, j: number) => getCellBGColor(i, j) === '#FF4500')
+  //     );
+  //   }
+
+  //   return null;
+  // };
+
+  const greyCaps: string[] = rows.flatMap((row: [], i: number) =>
     row.filter((cell: number, j: number) => getCellBGColor(i, j) === '#FF4500')
   );
 
@@ -215,10 +407,15 @@ export const Home = () => {
     return buttons;
   };
 
-  const handlePageClick = (p: number) => setCurTab(p);
+  const handlePageClick = (p: number) => {
+    //findStorage();
+    setCurTab(p);
+  };
 
   return (
-    <>
+    // loading
+    //   ?
+      <>
       <Header />
 
       {/* <View style={{flexDirection: 'row', padding: 5}}>
@@ -234,11 +431,11 @@ export const Home = () => {
       <Text style={styles.header}>Palavra {curTab + 1} de 5</Text>
 
       <ScrollView style={styles.map}>
-        {rows.map((row, i) => (
-          <View style={styles.row} key={`${word}-row-${i}`}>
+        {rows.map((row: any, i: number) => (
+          <View style={styles.row} key={`${curWord}-row-${i}`}>
             {row.map((letter: string, j: number) => (
               <View
-                    key={`${word}-cell-${i}-${j}`}
+                    key={`${curWord}-cell-${i}-${j}`}
                     style={[
                       styles.cell,
                       {
@@ -275,5 +472,6 @@ export const Home = () => {
 
       <Keypad onKeyPressed={onKeyPressed} greenCaps={greenCaps} greyCaps={greyCaps} yellowCaps={yellowCaps} />
     </>
+    // : <></>
   );
 };
