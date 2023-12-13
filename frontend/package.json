@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "Letrando",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -21,6 +21,7 @@
     "babel-plugin-module-resolver": "^5.0.0",
     "react": "18.2.0",
     "react-native": "0.71.11",
+    "react-native-feather": "^1.1.2",
     "react-native-gesture-handler": "^2.12.1",
     "react-native-pager-view": "^6.2.0",
     "react-native-reanimated": "^3.4.1",
@@ -29,6 +30,7 @@
     "react-native-screens": "^3.23.0",
     "react-native-splash-screen": "^3.3.0",
     "react-native-status-bar-height": "^2.6.0",
+    "react-native-svg": "^14.1.0",
     "react-native-tab-view": "^3.5.2",
     "zustand": "^4.4.1"
   },

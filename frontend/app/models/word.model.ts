@@ -6,8 +6,19 @@ export class Words {
 export class Word {
   word: string | undefined;
   status: string | undefined;
-  tries: [[]] | undefined;
+  tries: any[] | undefined;
   answers: number | undefined;
+  grammatical_class: string | undefined;
+  meaning: string | undefined;
+  synonyms: [string] | undefined;
+  antonyms: [string] | undefined;
+  phrase:
+    | {
+        author: string;
+        phrase: string;
+        font: string;
+      }
+    | undefined;
 }
 
 export class WordsStorage {

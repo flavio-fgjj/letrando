@@ -20,7 +20,7 @@ export const styles = StyleSheet.create({
   },
   key: {
     width: keyWidth - 3,
-    height: keyHeight - 3,
+    height: keyHeight - 6,
     margin: 2,
     borderRadius: 5,
     backgroundColor: constColors.grey,

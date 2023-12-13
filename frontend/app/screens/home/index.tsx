@@ -3,6 +3,7 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, Alert, ScrollView, TouchableOpacity} from 'react-native';
 import Clipboard from '@react-native-community/clipboard';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Info, Share2} from 'react-native-feather';
 // import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 // style
@@ -55,7 +56,7 @@ export const Home = () => {
   // const word: string = words[0];
   // const arrayLetters = word.split('');
 
-  const [rows, setRows] = useState<[[]]>([[]]);
+  const [rows, setRows] = useState<any[]>();
 
   const [curTab, setCurTab] = useState(0);
   const [curRow, setCurRow] = useState(0);
@@ -69,16 +70,16 @@ export const Home = () => {
     findStorage();
   }, []);
 
-  useEffect(() => {
-  }, [rows]);
+  // useEffect(() => {
+  // }, [rows]);
 
   useEffect(() => {
     if (store) {
-      setActualPage(curTab);
+      renderActualPage(curTab);
     }
   }, [curTab]);
 
-  const setActualPage = (n: number = 0) => {
+  const renderActualPage = (n: number = 0) => {
     switch (n) {
       case 0:
         setCurRow(store?.word_0?.answers ?? 0);
@@ -127,7 +128,6 @@ export const Home = () => {
         let aux: WordsStorage = JSON.parse(jsonValue);
         let dt = new Date();
         if (aux?.date?.toString().substring(0, 10) === dt.toISOString().substring(0, 10)) {
-          console.log('a', aux?.word_0?.answers);
           if (aux.word_0?.status === 'playing') {
             // const spl = aux.word_0.word !== undefined ? aux.word_0.word.split('') : [''];
             setCurWord(aux?.word_0?.word || '');
@@ -178,30 +178,75 @@ export const Home = () => {
             status: 'playing',
             tries: new Array(NUMBER_OF_TRIES).fill(new Array(words[0].length).fill('')),
             answers: 0,
+            grammatical_class: '',
+            meaning: '',
+            synonyms: [''],
+            antonyms: [''],
+            phrase: {
+              author: '',
+              phrase: '',
+              font: '',
+            },
           },
           word_1: {
             word: words[1],
             status: 'playing',
             tries: new Array(NUMBER_OF_TRIES).fill(new Array(words[1].length).fill('')),
             answers: 0,
+            grammatical_class: '',
+            meaning: '',
+            synonyms: [''],
+            antonyms: [''],
+            phrase: {
+              author: '',
+              phrase: '',
+              font: '',
+            },
           },
           word_2: {
             word: words[2],
             status: 'playing',
             tries: new Array(NUMBER_OF_TRIES).fill(new Array(words[2].length).fill('')),
             answers: 0,
+            grammatical_class: '',
+            meaning: '',
+            synonyms: [''],
+            antonyms: [''],
+            phrase: {
+              author: '',
+              phrase: '',
+              font: '',
+            },
           },
           word_3: {
             word: words[3],
             status: 'playing',
             tries: new Array(NUMBER_OF_TRIES).fill(new Array(words[3].length).fill('')),
             answers: 0,
+            grammatical_class: '',
+            meaning: '',
+            synonyms: [''],
+            antonyms: [''],
+            phrase: {
+              author: '',
+              phrase: '',
+              font: '',
+            },
           },
           word_4: {
             word: words[4],
             status: 'playing',
             tries: new Array(NUMBER_OF_TRIES).fill(new Array(words[4].length).fill('')),
             answers: 0,
+            grammatical_class: '',
+            meaning: '',
+            synonyms: [''],
+            antonyms: [''],
+            phrase: {
+              author: '',
+              phrase: '',
+              font: '',
+            },
           },
         };
 
@@ -230,19 +275,18 @@ export const Home = () => {
     }
   };
 
-  const checkGameState = () => {
+  const checkGameState = async () => {
     if (checkIfWon() && gameState !== 'won') {
       Alert.alert('Uhuul', 'Você venceu!!!', [{text: 'Share', onPress: shareScore}]);
-      setGameState('won');
+      //setGameState('won');
     } else if (checkIfLost() && gameState !== 'lost') {
       Alert.alert('Meh', 'Tente novamente amanhã!!!');
-      setGameState('lost');
+      //setGameState('lost');
     }
   };
 
   const shareScore = () => {
-    const score = rows
-      .map((row: any, i) =>
+    const score = rows?.map((row: any, i) =>
         row.map((cell: string, j: number) => colorsToEmoji[getCellBGColor(i,j)]).join('')
       )
       .filter((row) => row)
@@ -254,16 +298,17 @@ export const Home = () => {
   };
 
   const checkIfWon = () => {
-    // if (rows.length === 0) {
-    //   return false;
-    // }
-    const row: any = rows[curRow - 1];
+    if (rows?.length === 0) {
+      return false;
+    }
+
+    const row: any = rows ? rows[curRow] : [];
 
     return row?.every((letter: string, i: number) => letter === arrayLetters[i]);
   };
 
   const checkIfLost = () => {
-    return !checkIfWon() && curRow === rows.length;
+    return !checkIfWon() && curRow === rows?.length;
   };
 
   const onKeyPressed = (key: string) => {
@@ -284,44 +329,93 @@ export const Home = () => {
     }
 
     if (key === ENTER) {
-      if (curCol === rows[0].length) {
-        setCurRow(curRow + 1);
+      if (rows && curCol === rows[0].length) {
+        const cRowAux: number = curRow + 1;
+        console.log('check if won', checkIfWon());
+
+        setCurRow(checkIfWon() ? 6 : cRowAux);
         setCurCol(0);
         setRows(updatedRows);
 
+        console.log('checkIfWon()', checkIfWon());
         let aux: WordsStorage = {
           date: store?.date,
           status: store?.status,
           words: store?.words,
           word_0: curTab === 0 ? {
-            answers: curRow + 1,
-            status: store?.word_0?.status,
+            answers: checkIfWon() ? 6 : cRowAux,
+            status: checkIfWon() ? 'won' : cRowAux === NUMBER_OF_TRIES ? 'lost' : 'playing',
             tries: updatedRows,
             word: store?.word_0?.word,
+            grammatical_class: '',
+            meaning: '',
+            synonyms: [''],
+            antonyms: [''],
+            phrase: {
+              author: '',
+              phrase: '',
+              font: '',
+            },
           } : store?.word_0,
           word_1: curTab === 1 ? {
-            answers: curRow ? curRow + 1 : 0,
-            status: store?.word_1?.status,
+            answers: checkIfWon() ? 6 : cRowAux,
+            status: checkIfWon() ? 'won' : cRowAux === NUMBER_OF_TRIES ? 'lost' : 'playing',
             tries: updatedRows,
             word: store?.word_1?.word,
+            grammatical_class: '',
+            meaning: '',
+            synonyms: [''],
+            antonyms: [''],
+            phrase: {
+              author: '',
+              phrase: '',
+              font: '',
+            },
           } : store?.word_1,
           word_2: curTab === 2 ? {
-            answers: curRow + 1,
-            status: store?.word_2?.status,
+            answers: checkIfWon() ? 6 : cRowAux,
+            status: checkIfWon() ? 'won' : cRowAux === NUMBER_OF_TRIES ? 'lost' : 'playing',
             tries: updatedRows,
             word: store?.word_2?.word,
+            grammatical_class: '',
+            meaning: '',
+            synonyms: [''],
+            antonyms: [''],
+            phrase: {
+              author: '',
+              phrase: '',
+              font: '',
+            },
           } : store?.word_2,
           word_3: curTab === 3 ? {
-            answers: curRow + 1,
-            status: store?.word_3?.status,
+            answers: checkIfWon() ? 6 : cRowAux,
+            status: checkIfWon() ? 'won' : cRowAux === NUMBER_OF_TRIES ? 'lost' : 'playing',
             tries: updatedRows,
             word: store?.word_3?.word,
+            grammatical_class: '',
+            meaning: '',
+            synonyms: [''],
+            antonyms: [''],
+            phrase: {
+              author: '',
+              phrase: '',
+              font: '',
+            },
           } : store?.word_3,
           word_4: curTab === 4 ? {
-            answers: curRow + 1,
-            status: store?.word_4?.status,
+            answers: checkIfWon() ? 6 : cRowAux,
+            status: checkIfWon() ? 'won' : cRowAux === NUMBER_OF_TRIES ? 'lost' : 'playing',
             tries: updatedRows,
             word: store?.word_4?.word,
+            grammatical_class: '',
+            meaning: '',
+            synonyms: [''],
+            antonyms: [''],
+            phrase: {
+              author: '',
+              phrase: '',
+              font: '',
+            },
           } : store?.word_4,
         };
         storeData(aux);
@@ -330,7 +424,7 @@ export const Home = () => {
       return;
     }
 
-    if (curCol < rows[0].length) {
+    if (rows && curCol < rows[0].length) {
       updatedRows[curRow][curCol] = key;
       setRows(updatedRows);
       setCurCol(curCol + 1);
@@ -342,7 +436,7 @@ export const Home = () => {
   };
 
   const getCellBGColor = (row: number, col: number) => {
-    const letter: string = rows[row][col];
+    const letter: string = rows ? rows[row][col] : '';
 
     if (row > curRow) {
       return constColors.grey;
@@ -366,15 +460,15 @@ export const Home = () => {
     return '#FF4500';
   };
 
-  const greenCaps: string[] = rows.flatMap((row: [], i: number) =>
+  const greenCaps: string[] = !rows ? [''] : rows.flatMap((row: [], i: number) =>
     row.filter((cell: number, j: number) => getCellBGColor(i, j) === constColors.primary)
   );
 
-  const yellowCaps: string[] = rows.flatMap((row: [], i: number) =>
+  const yellowCaps: string[] = !rows ? [''] : rows.flatMap((row: [], i: number) =>
     row.filter((cell: number, j: number) => getCellBGColor(i, j) === constColors.secondary)
   );
 
-  const greyCaps: string[] = rows.flatMap((row: [], i: number) =>
+  const greyCaps: string[] = !rows ? [''] : rows.flatMap((row: [], i: number) =>
     row.filter((cell: number, j: number) => getCellBGColor(i, j) === '#FF4500')
   );
 
@@ -419,11 +513,6 @@ export const Home = () => {
             styles.paginationButton,
             i === curTab ? styles.paginationButtonActive : null,
           ]}>
-          {/* {
-            i === 0
-              ? <Text style={styles.badge}>⏳</Text>
-              : i === 3 ? <Text style={styles.badge}>✔️</Text> : <Text style={styles.badge}>❌</Text>
-          } */}
           <Text style={styles.badge}>{getCurStatus(i)}</Text>
           <Text style={styles.textPagination}>{i + 1}</Text>
         </TouchableOpacity>
@@ -457,7 +546,7 @@ export const Home = () => {
       <Text style={styles.header}>Palavra {curTab + 1} de 5</Text>
 
       <ScrollView style={styles.map}>
-        {rows.map((row: any, i: number) => (
+        {rows?.map((row: any, i: number) => (
           <View style={styles.row} key={`${curWord}-row-${i}`}>
             {row.map((letter: string, j: number) => (
               <View
@@ -482,19 +571,30 @@ export const Home = () => {
         }
 
         <View style={styles.wordPlacar}>
-          <Text style={styles.wordPlacarTitle}>Tentativa {curRow + 1} de 5</Text>
+          <Text style={styles.wordPlacarTitle}>{curRow > 5 ? '' : `Tentativa ${curRow + 1} de 5`}</Text>
           {
             gameState === 'won'
               ? <Text style={styles.wordPlacarInfo}>✅ Você acertou na {curRow} tentativa.</Text>
               : <></>
           }
           {
-            curRow > 0 && gameState !== 'won'
-            ? <Text style={styles.wordPlacarInfo}>❌ Você já desperdiçou {curRow} {curRow === 1 ? 'tentativa' : 'tentativas'}</Text>
-            : <Text style={styles.wordPlacarInfo}>💪 Você não desperdiçou nenhuma tentativa</Text>
+            getCurStatus(curTab) === '✔️' && curRow > 0
+            ? <Text style={[styles.wordPlacarInfo, {fontSize: 18}]}>Uhull Você acertou!!! 😎</Text>
+            : getCurStatus(curTab) === '❌'
+              ? <Text style={[styles.wordPlacarInfo, {fontSize: 18}]}>{curRow === 1 ? `❌ Você já desperdiçou ${curRow} tentativa` : `❌ Você já desperdiçou ${curRow} tentativas`}</Text>
+              : <Text style={[styles.wordPlacarInfo, {fontSize: 18}]}>💪 Boraaa!!! Que palavra é essa?</Text>
           }
         </View>
       </ScrollView>
+
+      <View style={styles.rowButtons}>
+        <TouchableOpacity style={styles.btnShare}>
+          <Share2 strokeWidth={2} width={25} height={25} color={colors.wrong}/>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.btnShare}>
+          <Info strokeWidth={2} width={25} height={25} color={colors.wrong}/>
+        </TouchableOpacity>
+      </View>
 
       <Keypad onKeyPressed={onKeyPressed} greenCaps={greenCaps} greyCaps={greyCaps} yellowCaps={yellowCaps} />
     </>

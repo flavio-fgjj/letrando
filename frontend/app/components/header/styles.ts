@@ -10,7 +10,8 @@ export const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
     flexDirection: 'row',
-    marginTop: adjust(8),
+    // marginTop: adjust(8),
+    paddingHorizontal: adjust(4),
   },
   title: {
     fontWeight: 'bold',
@@ -20,8 +21,8 @@ export const styles = StyleSheet.create({
     letterSpacing: adjust(7),
   },
   tinyLogo: {
-    width: wp(60),
-    height: hp(80),
+    width: wp(50),
+    height: hp(50),
     marginRight: adjust(10),
     resizeMode: 'stretch',
   },
