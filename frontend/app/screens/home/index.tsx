@@ -120,44 +120,49 @@ export const Home = () => {
   }, [curRow]);
 
   const findStorage = async () => {
+    // await AsyncStorage.removeItem(STORAGE_KEY);
     try {
       const jsonValue = await AsyncStorage.getItem(STORAGE_KEY);
       if (jsonValue != null) {
         let aux: WordsStorage = JSON.parse(jsonValue);
         let dt = new Date();
-        if (aux?.date?.toString().substring(0, 10) !== dt.toISOString().substring(0, 10)) {
-
+        if (aux?.date?.toString().substring(0, 10) === dt.toISOString().substring(0, 10)) {
+          console.log('a', aux?.word_0?.answers);
           if (aux.word_0?.status === 'playing') {
-            const spl = aux.word_0.word !== undefined ? aux.word_0.word.split('') : [''];
+            // const spl = aux.word_0.word !== undefined ? aux.word_0.word.split('') : [''];
             setCurWord(aux?.word_0?.word || '');
-            setArrayLetters(spl);
-            setRows(new Array(NUMBER_OF_TRIES).fill(new Array(spl.length).fill('')));
-            setCurRow(0);
+            setArrayLetters(aux.word_0.word !== undefined ? aux.word_0.word.split('') : ['']);
+            // setArrayLetters(spl);
+            //setRows(new Array(NUMBER_OF_TRIES).fill(new Array(spl.length).fill('')));
+            setRows(aux?.word_0?.tries ?? [[]]);
+            setCurRow(aux?.word_0?.answers ?? 0);
           } else if (aux.word_1?.status === 'playing') {
-            const spl = aux.word_1.word !== undefined ? aux.word_1.word.split('') : [''];
+            // const spl = aux.word_1.word !== undefined ? aux.word_1.word.split('') : [''];
             setCurWord(aux?.word_1?.word || '');
             setArrayLetters(aux.word_1.word !== undefined ? aux.word_1.word.split('') : ['']);
-            setRows(new Array(NUMBER_OF_TRIES).fill(new Array(spl.length).fill('')));
-            setCurRow(1);
+            setRows(aux?.word_1?.tries ?? [[]]);
+            setCurRow(aux?.word_1?.answers ?? 0);
           } else if (aux.word_2?.status === 'playing') {
-            const spl = aux.word_2.word !== undefined ? aux.word_2.word.split('') : [''];
+            // const spl = aux.word_2.word !== undefined ? aux.word_2.word.split('') : [''];
             setCurWord(aux?.word_2?.word || '');
             setArrayLetters(aux.word_2.word !== undefined ? aux.word_2.word.split('') : ['']);
-            setRows(new Array(NUMBER_OF_TRIES).fill(new Array(spl.length).fill('')));
-            setCurRow(2);
+            setRows(aux?.word_2?.tries ?? [[]]);
+            setCurRow(aux?.word_2?.answers ?? 0);
           } else if (aux.word_3?.status === 'playing') {
-            const spl = aux.word_3.word !== undefined ? aux.word_3.word.split('') : [''];
+            // const spl = aux.word_3.word !== undefined ? aux.word_3.word.split('') : [''];
             setCurWord(aux?.word_3?.word || '');
             setArrayLetters(aux.word_3.word !== undefined ? aux.word_3.word.split('') : ['']);
-            setRows(new Array(NUMBER_OF_TRIES).fill(new Array(spl.length).fill('')));
-            setCurRow(3);
+            setRows(aux?.word_3?.tries ?? [[]]);
+            setCurRow(aux?.word_3?.answers ?? 0);
           } else if (aux.word_4?.status === 'playing') {
-            const spl = aux.word_4.word !== undefined ? aux.word_4.word.split('') : [''];
+            // const spl = aux.word_4.word !== undefined ? aux.word_4.word.split('') : [''];
             setCurWord(aux?.word_4?.word || '');
             setArrayLetters(aux.word_4.word !== undefined ? aux.word_4.word.split('') : ['']);
-            setRows(new Array(NUMBER_OF_TRIES).fill(new Array(spl.length).fill('')));
-            setCurRow(4);
+            setRows(aux?.word_4?.tries ?? [[]]);
+            setCurRow(aux?.word_4?.answers ?? 0);
           }
+        } else {
+          // get words of the day
         }
 
         setStore(aux);
@@ -215,9 +220,10 @@ export const Home = () => {
     }
   };
 
-  const storeData = async (value: any) => {
+  const storeData = async (value: WordsStorage) => {
     try {
       const jsonValue = JSON.stringify(value);
+      setStore(value);
       await AsyncStorage.setItem(STORAGE_KEY, jsonValue);
     } catch (e) {
       // saving error
@@ -251,9 +257,6 @@ export const Home = () => {
     // if (rows.length === 0) {
     //   return false;
     // }
-    console.log('rows', rows);
-    console.log('curRow', curRow);
-    console.log(rows[curRow - 1]);
     const row: any = rows[curRow - 1];
 
     return row?.every((letter: string, i: number) => letter === arrayLetters[i]);
@@ -284,7 +287,44 @@ export const Home = () => {
       if (curCol === rows[0].length) {
         setCurRow(curRow + 1);
         setCurCol(0);
-        // set storage
+        setRows(updatedRows);
+
+        let aux: WordsStorage = {
+          date: store?.date,
+          status: store?.status,
+          words: store?.words,
+          word_0: curTab === 0 ? {
+            answers: curRow + 1,
+            status: store?.word_0?.status,
+            tries: updatedRows,
+            word: store?.word_0?.word,
+          } : store?.word_0,
+          word_1: curTab === 1 ? {
+            answers: curRow ? curRow + 1 : 0,
+            status: store?.word_1?.status,
+            tries: updatedRows,
+            word: store?.word_1?.word,
+          } : store?.word_1,
+          word_2: curTab === 2 ? {
+            answers: curRow + 1,
+            status: store?.word_2?.status,
+            tries: updatedRows,
+            word: store?.word_2?.word,
+          } : store?.word_2,
+          word_3: curTab === 3 ? {
+            answers: curRow + 1,
+            status: store?.word_3?.status,
+            tries: updatedRows,
+            word: store?.word_3?.word,
+          } : store?.word_3,
+          word_4: curTab === 4 ? {
+            answers: curRow + 1,
+            status: store?.word_4?.status,
+            tries: updatedRows,
+            word: store?.word_4?.word,
+          } : store?.word_4,
+        };
+        storeData(aux);
       }
 
       return;
@@ -326,43 +366,13 @@ export const Home = () => {
     return '#FF4500';
   };
 
-  // const greenCaps = (): string[] => {
-  //   if (rows) {
-  //     return rows.flatMap((row: [], i: number) =>
-  //       row.filter((cell: number, j: number) => getCellBGColor(i, j) === constColors.primary)
-  //     );
-  //   }
-
-  //   return [''];
-  // };
-
   const greenCaps: string[] = rows.flatMap((row: [], i: number) =>
     row.filter((cell: number, j: number) => getCellBGColor(i, j) === constColors.primary)
   );
 
-  // const yellowCaps = () => {
-  //   if (rows) {
-  //     return rows.flatMap((row: [], i: number) =>
-  //       row.filter((cell: number, j: number) => getCellBGColor(i, j) === constColors.secondary)
-  //     );
-  //   }
-
-  //   return null;
-  // };
-
   const yellowCaps: string[] = rows.flatMap((row: [], i: number) =>
     row.filter((cell: number, j: number) => getCellBGColor(i, j) === constColors.secondary)
   );
-
-  // const greyCaps = () => {
-  //   if (rows) {
-  //     return rows.flatMap((row: [], i: number) =>
-  //       row.filter((cell: number, j: number) => getCellBGColor(i, j) === '#FF4500')
-  //     );
-  //   }
-
-  //   return null;
-  // };
 
   const greyCaps: string[] = rows.flatMap((row: [], i: number) =>
     row.filter((cell: number, j: number) => getCellBGColor(i, j) === '#FF4500')
@@ -372,18 +382,34 @@ export const Home = () => {
     return <Loader />;
   }
 
-  const renderPaginationButtons = () => {
-    const maxButtonsToShow = 5;
-    let startPage = Math.max(0, curTab - Math.floor(maxButtonsToShow / 2));
-    let endPage = Math.min(5, startPage + maxButtonsToShow - 1);
-
-    if (endPage - startPage + 1 < maxButtonsToShow) {
-      startPage = Math.max(0, endPage - maxButtonsToShow + 1);
+  const getCurStatus = (t: number) => {
+    let ret = '';
+    switch (t) {
+      case 0:
+        ret = store?.word_0?.status === 'playing' ? '⏳' : store?.word_0?.status === 'won' ? '✔️' : '❌';
+        break;
+      case 1:
+        ret = store?.word_1?.status === 'playing' ? '⏳' : store?.word_1?.status === 'won' ? '✔️' : '❌';
+        break;
+      case 2:
+        ret = store?.word_2?.status === 'playing' ? '⏳' : store?.word_2?.status === 'won' ? '✔️' : '❌';
+        break;
+      case 3:
+        ret = store?.word_3?.status === 'playing' ? '⏳' : store?.word_3?.status === 'won' ? '✔️' : '❌';
+        break;
+      case 4:
+        ret = store?.word_4?.status === 'playing' ? '⏳' : store?.word_4?.status === 'won' ? '✔️' : '❌';
+        break;
     }
 
+    return ret;
+  };
+
+  const renderPaginationButtons = () => {
+    const maxButtonsToShow = 5;
     const buttons = [];
 
-    for (let i = startPage; i <= endPage; i++) {
+    for (let i = 0; i < maxButtonsToShow; i++) {
       buttons.push(
         <>
         <TouchableOpacity
@@ -393,11 +419,12 @@ export const Home = () => {
             styles.paginationButton,
             i === curTab ? styles.paginationButtonActive : null,
           ]}>
-          {
+          {/* {
             i === 0
               ? <Text style={styles.badge}>⏳</Text>
               : i === 3 ? <Text style={styles.badge}>✔️</Text> : <Text style={styles.badge}>❌</Text>
-          }
+          } */}
+          <Text style={styles.badge}>{getCurStatus(i)}</Text>
           <Text style={styles.textPagination}>{i + 1}</Text>
         </TouchableOpacity>
         </>
@@ -408,7 +435,6 @@ export const Home = () => {
   };
 
   const handlePageClick = (p: number) => {
-    //findStorage();
     setCurTab(p);
   };
 
