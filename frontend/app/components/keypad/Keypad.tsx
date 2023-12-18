@@ -13,6 +13,7 @@ interface Props {
   greenCaps: string[];
   yellowCaps: string[];
   greyCaps: string[];
+  alreadyHit: boolean;
 }
 
 interface PropsToComponent {
@@ -20,6 +21,7 @@ interface PropsToComponent {
   greenCaps: string[];
   yellowCaps: string[];
   greyCaps: string[];
+  alreadyHit: boolean;
   letter: string;
 }
 
@@ -52,7 +54,7 @@ const KeypadRow = (p: PropsToComponent) => {
       ]}
       key={p.letter}
       onPress={() => p.onKeyPressed(p.letter)}
-      disabled={p.greyCaps.includes(p.letter)}>
+      disabled={p.greyCaps.includes(p.letter) || p.alreadyHit}>
       <Text style={styles.keyText}>{p.letter && p.letter.toUpperCase()}</Text>
     </Pressable>
   );
@@ -71,6 +73,7 @@ export const Keypad = (props: Props) => {
             greyCaps={props.greyCaps}
             onKeyPressed={props.onKeyPressed}
             yellowCaps={props.yellowCaps}
+            alreadyHit={props.alreadyHit}
             letter={item}
           />
         )}
@@ -85,6 +88,7 @@ export const Keypad = (props: Props) => {
             greyCaps={props.greyCaps}
             onKeyPressed={props.onKeyPressed}
             yellowCaps={props.yellowCaps}
+            alreadyHit={props.alreadyHit}
             letter={item}
           />
         )}
@@ -99,6 +103,7 @@ export const Keypad = (props: Props) => {
             greyCaps={props.greyCaps}
             onKeyPressed={props.onKeyPressed}
             yellowCaps={props.yellowCaps}
+            alreadyHit={props.alreadyHit}
             letter={item}
           />
         )}

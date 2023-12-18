@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, Alert, ScrollView, TouchableOpacity} from 'react-native';
 import Clipboard from '@react-native-community/clipboard';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Info, Share2} from 'react-native-feather';
+import {Info, Share2, HelpCircle} from 'react-native-feather';
 // import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 // style
@@ -52,7 +52,7 @@ export const Home = () => {
   const [loading, setLoading] = useState(false);
   // const [selectedTab, setSelectedTab] = useState(0);
 
-  const words: string[] = ['castelo', 'gloria', 'ainda', 'bola', 'sol'];
+  const words: string[] = ['castelo', 'gloria', 'moral', 'bola', 'sol'];
   // const word: string = words[0];
   // const arrayLetters = word.split('');
 
@@ -67,6 +67,7 @@ export const Home = () => {
   const [arrayLetters, setArrayLetters] = useState<string[]>([]);
 
   useEffect(() => {
+    setCurTab(0);
     findStorage();
   }, []);
 
@@ -114,11 +115,11 @@ export const Home = () => {
     }
   };
 
-  useEffect(() => {
-    if (curRow > 0) {
-      checkGameState();
-    }
-  }, [curRow]);
+  // useEffect(() => {
+  //   if (curRow > 0) {
+  //     checkGameState();
+  //   }
+  // }, [curRow]);
 
   const findStorage = async () => {
     // await AsyncStorage.removeItem(STORAGE_KEY);
@@ -129,37 +130,42 @@ export const Home = () => {
         let dt = new Date();
         if (aux?.date?.toString().substring(0, 10) === dt.toISOString().substring(0, 10)) {
           if (aux.word_0?.status === 'playing') {
-            // const spl = aux.word_0.word !== undefined ? aux.word_0.word.split('') : [''];
+            setCurTab(0);
             setCurWord(aux?.word_0?.word || '');
             setArrayLetters(aux.word_0.word !== undefined ? aux.word_0.word.split('') : ['']);
-            // setArrayLetters(spl);
-            //setRows(new Array(NUMBER_OF_TRIES).fill(new Array(spl.length).fill('')));
             setRows(aux?.word_0?.tries ?? [[]]);
             setCurRow(aux?.word_0?.answers ?? 0);
           } else if (aux.word_1?.status === 'playing') {
-            // const spl = aux.word_1.word !== undefined ? aux.word_1.word.split('') : [''];
+            setCurTab(1);
             setCurWord(aux?.word_1?.word || '');
             setArrayLetters(aux.word_1.word !== undefined ? aux.word_1.word.split('') : ['']);
             setRows(aux?.word_1?.tries ?? [[]]);
             setCurRow(aux?.word_1?.answers ?? 0);
           } else if (aux.word_2?.status === 'playing') {
-            // const spl = aux.word_2.word !== undefined ? aux.word_2.word.split('') : [''];
+            setCurTab(2);
             setCurWord(aux?.word_2?.word || '');
             setArrayLetters(aux.word_2.word !== undefined ? aux.word_2.word.split('') : ['']);
             setRows(aux?.word_2?.tries ?? [[]]);
             setCurRow(aux?.word_2?.answers ?? 0);
           } else if (aux.word_3?.status === 'playing') {
-            // const spl = aux.word_3.word !== undefined ? aux.word_3.word.split('') : [''];
+            setCurTab(3);
             setCurWord(aux?.word_3?.word || '');
             setArrayLetters(aux.word_3.word !== undefined ? aux.word_3.word.split('') : ['']);
             setRows(aux?.word_3?.tries ?? [[]]);
             setCurRow(aux?.word_3?.answers ?? 0);
           } else if (aux.word_4?.status === 'playing') {
-            // const spl = aux.word_4.word !== undefined ? aux.word_4.word.split('') : [''];
+            setCurTab(4);
             setCurWord(aux?.word_4?.word || '');
             setArrayLetters(aux.word_4.word !== undefined ? aux.word_4.word.split('') : ['']);
             setRows(aux?.word_4?.tries ?? [[]]);
             setCurRow(aux?.word_4?.answers ?? 0);
+          } else {
+            setCurTab(0);
+            setCurWord(aux?.word_0?.word || '');
+            setArrayLetters(aux?.word_0?.word !== undefined ? aux.word_0.word.split('') : ['']);
+            setRows(aux?.word_0?.tries ?? [[]]);
+            setCurRow(aux?.word_0?.answers ?? 0);
+            setGameState('finished');
           }
         } else {
           // get words of the day
@@ -173,19 +179,22 @@ export const Home = () => {
           date: dt.toISOString(),
           words: words,
           status: 'playing',
+          points: 0,
+          hits: 0,
+          misses: 0,
           word_0: {
             word: words[0],
             status: 'playing',
             tries: new Array(NUMBER_OF_TRIES).fill(new Array(words[0].length).fill('')),
             answers: 0,
-            grammatical_class: '',
-            meaning: '',
-            synonyms: [''],
-            antonyms: [''],
+            grammatical_class: 'substantivo masculino',
+            meaning: 'residência real ou senhorial dotada de fortificações',
+            synonyms: ['fortalezas', 'fortes'],
+            antonyms: ['barraco', 'pau-a-pique'],
             phrase: {
-              author: '',
-              phrase: '',
-              font: '',
+              author: 'MAria Almeida',
+              phrase: 'Os castelos na areia edificam-se com imaginação. Os castelos na vida erguem-se com determinação',
+              font: 'O Pensador',
             },
           },
           word_1: {
@@ -193,14 +202,14 @@ export const Home = () => {
             status: 'playing',
             tries: new Array(NUMBER_OF_TRIES).fill(new Array(words[1].length).fill('')),
             answers: 0,
-            grammatical_class: '',
-            meaning: '',
-            synonyms: [''],
-            antonyms: [''],
+            grammatical_class: 'substantivo feminimo',
+            meaning: 'fama que uma pessoa obtém por feitos heroicos, grandes obras ou por suas extraordinárias qualidades',
+            synonyms: ['fama', 'vitoria', 'aura'],
+            antonyms: ['desonra', 'infâmia'],
             phrase: {
-              author: '',
-              phrase: '',
-              font: '',
+              author: 'Napoleão Bonaparte',
+              phrase: 'A glória é fugaz, mas a obscuridade dura para sempre.',
+              font: 'O pensador',
             },
           },
           word_2: {
@@ -208,14 +217,14 @@ export const Home = () => {
             status: 'playing',
             tries: new Array(NUMBER_OF_TRIES).fill(new Array(words[2].length).fill('')),
             answers: 0,
-            grammatical_class: '',
-            meaning: '',
-            synonyms: [''],
-            antonyms: [''],
+            grammatical_class: 'adjetivo uniforme',
+            meaning: 'conjunto de valores, individuais ou coletivos, considerados universalmente como norteadores das relações sociais e da conduta dos homens',
+            synonyms: ['brio', 'carater'],
+            antonyms: ['imoral'],
             phrase: {
-              author: '',
-              phrase: '',
-              font: '',
+              author: 'Fidel Castro',
+              phrase: 'Um revolucionário pode perder tudo: a família, a liberdade, até a vida. Menos a moral.',
+              font: 'O Pensador',
             },
           },
           word_3: {
@@ -223,14 +232,14 @@ export const Home = () => {
             status: 'playing',
             tries: new Array(NUMBER_OF_TRIES).fill(new Array(words[3].length).fill('')),
             answers: 0,
-            grammatical_class: '',
-            meaning: '',
-            synonyms: [''],
+            grammatical_class: 'substantivo feminino',
+            meaning: 'objeto esférico ou ovoide, de espécie e matéria várias, maciço ou cheio de ar comprimido, us. em certos jogos ou esportes para ser chutado, batido ou lançado.',
+            synonyms: ['globo', 'esfera', 'pelota'],
             antonyms: [''],
             phrase: {
-              author: '',
-              phrase: '',
-              font: '',
+              author: 'Armando Nogueira',
+              phrase: 'Se Pelé não tivesse nascido homem, teria nascido bola.',
+              font: 'O Pensador',
             },
           },
           word_4: {
@@ -238,14 +247,14 @@ export const Home = () => {
             status: 'playing',
             tries: new Array(NUMBER_OF_TRIES).fill(new Array(words[4].length).fill('')),
             answers: 0,
-            grammatical_class: '',
-            meaning: '',
-            synonyms: [''],
-            antonyms: [''],
+            grammatical_class: 'substativo masculino',
+            meaning: 'estrela que faz parte da Via Láctea e que é o centro do sistema planetário, do qual participa a Terra',
+            synonyms: ['claridade', 'aurora', 'brilho'],
+            antonyms: ['escuro', 'noite'],
             phrase: {
-              author: '',
-              phrase: '',
-              font: '',
+              author: 'Confúcio',
+              phrase: 'Até que o sol não brilhe, acendamos uma vela na escuridão.',
+              font: 'O Pensador',
             },
           },
         };
@@ -275,26 +284,45 @@ export const Home = () => {
     }
   };
 
-  const checkGameState = async () => {
-    if (checkIfWon() && gameState !== 'won') {
-      Alert.alert('Uhuul', 'Você venceu!!!', [{text: 'Share', onPress: shareScore}]);
-      //setGameState('won');
-    } else if (checkIfLost() && gameState !== 'lost') {
-      Alert.alert('Meh', 'Tente novamente amanhã!!!');
-      //setGameState('lost');
+  const checkGameState = async (n: number) => {
+    // if (checkIfWon() && gameState !== 'won') {
+    //   Alert.alert('Uhuul', 'Você venceu!!!', [{text: 'Share', onPress: shareScore}]);
+    //   //setGameState('won');
+    // } else if (checkIfLost() && gameState !== 'lost') {
+    //   Alert.alert('Meh', 'Tente novamente amanhã!!!');
+    //   //setGameState('lost');
+    // }
+    if (n === NUMBER_OF_WORDS) {
+      setGameState('finished');
     }
   };
 
   const shareScore = () => {
-    const score = rows?.map((row: any, i) =>
-        row.map((cell: string, j: number) => colorsToEmoji[getCellBGColor(i,j)]).join('')
-      )
-      .filter((row) => row)
-      .join('\n');
+    console.log(store);
+    // const score = rows?.map((row: any, i) =>
+    //     row.map((cell: string, j: number) => colorsToEmoji[getCellBGColor(i,j)]).join('')
+    //   )
+    //   .filter((row) => row)
+    //   .join('\n');
 
-    const textToShare = `Me desempenho no Letrando! :) \n\n ${score}`;
+    let wons = 0;
+    wons = store?.word_0?.status !== 'lost' ? (wons + 1) : wons;
+    wons = store?.word_1?.status !== 'lost' ? (wons + 1) : wons;
+    wons = store?.word_2?.status !== 'lost' ? (wons + 1) : wons;
+    wons = store?.word_3?.status !== 'lost' ? (wons + 1) : wons;
+    wons = store?.word_4?.status !== 'lost' ? (wons + 1) : wons;
+    // cosnt res = [store?.word_0?.status !== 'lost' && 1]
+    // const hits = store?.word_0?.status
+
+    let losts = NUMBER_OF_WORDS - wons;
+
+    const score = `✔️ ${wons} \n
+                   ❌ ${losts} \n
+                   Pontos... 
+    `;
+    const textToShare = `Meu desempenho no Letrando! 😎💪 \n\n ${score}`;
     Clipboard.setString(textToShare);
-    Alert.alert('Resultado copiado!', 'Compartilhe nas suas redes! :)');
+    Alert.alert('Resultado copiado!', 'Compartilhe nas suas redes! 😎');
   };
 
   const checkIfWon = () => {
@@ -331,94 +359,101 @@ export const Home = () => {
     if (key === ENTER) {
       if (rows && curCol === rows[0].length) {
         const cRowAux: number = curRow + 1;
-        console.log('check if won', checkIfWon());
 
-        setCurRow(checkIfWon() ? 6 : cRowAux);
+        setCurRow(cRowAux);
         setCurCol(0);
         setRows(updatedRows);
 
-        console.log('checkIfWon()', checkIfWon());
+        const totalTries: number = (store?.hits ?? 0) + (store?.misses ?? 0) + 1;
+
+        let won: boolean = checkIfWon();
+        let lost: boolean = checkIfLost();
         let aux: WordsStorage = {
           date: store?.date,
           status: store?.status,
+          points: 0,
           words: store?.words,
+          hits: won && store?.hits ? store?.hits + 1 : store?.hits,
+          misses: lost && store?.misses ? store?.misses + 1 : store?.misses,
           word_0: curTab === 0 ? {
-            answers: checkIfWon() ? 6 : cRowAux,
-            status: checkIfWon() ? 'won' : cRowAux === NUMBER_OF_TRIES ? 'lost' : 'playing',
+            // answers: won ? 6 : cRowAux,
+            answers: cRowAux,
+            status: won ? 'won' : cRowAux === NUMBER_OF_TRIES ? 'lost' : 'playing',
             tries: updatedRows,
             word: store?.word_0?.word,
-            grammatical_class: '',
-            meaning: '',
-            synonyms: [''],
-            antonyms: [''],
+            grammatical_class: 'substantivo masculino',
+            meaning: 'residência real ou senhorial dotada de fortificações',
+            synonyms: ['fortalezas', 'fortes'],
+            antonyms: ['barraco', 'pau-a-pique'],
             phrase: {
-              author: '',
-              phrase: '',
-              font: '',
+              author: 'MAria Almeida',
+              phrase: 'Os castelos na areia edificam-se com imaginação. Os castelos na vida erguem-se com determinação',
+              font: 'O Pensador',
             },
           } : store?.word_0,
           word_1: curTab === 1 ? {
-            answers: checkIfWon() ? 6 : cRowAux,
-            status: checkIfWon() ? 'won' : cRowAux === NUMBER_OF_TRIES ? 'lost' : 'playing',
+            answers: cRowAux,
+            status: won ? 'won' : cRowAux === NUMBER_OF_TRIES ? 'lost' : 'playing',
             tries: updatedRows,
             word: store?.word_1?.word,
-            grammatical_class: '',
-            meaning: '',
-            synonyms: [''],
-            antonyms: [''],
+            grammatical_class: 'substantivo feminimo',
+            meaning: 'fama que uma pessoa obtém por feitos heroicos, grandes obras ou por suas extraordinárias qualidades',
+            synonyms: ['fama', 'vitoria', 'aura'],
+            antonyms: ['desonra', 'infâmia'],
             phrase: {
-              author: '',
-              phrase: '',
-              font: '',
+              author: 'Napoleão Bonaparte',
+              phrase: 'A glória é fugaz, mas a obscuridade dura para sempre.',
+              font: 'O pensador',
             },
           } : store?.word_1,
           word_2: curTab === 2 ? {
-            answers: checkIfWon() ? 6 : cRowAux,
-            status: checkIfWon() ? 'won' : cRowAux === NUMBER_OF_TRIES ? 'lost' : 'playing',
+            answers: cRowAux,
+            status: won ? 'won' : cRowAux === NUMBER_OF_TRIES ? 'lost' : 'playing',
             tries: updatedRows,
             word: store?.word_2?.word,
-            grammatical_class: '',
-            meaning: '',
-            synonyms: [''],
-            antonyms: [''],
+            grammatical_class: 'adjetivo uniforme',
+            meaning: 'conjunto de valores, individuais ou coletivos, considerados universalmente como norteadores das relações sociais e da conduta dos homens',
+            synonyms: ['brio', 'carater'],
+            antonyms: ['imoral'],
             phrase: {
-              author: '',
-              phrase: '',
-              font: '',
+              author: 'Fidel Castro',
+              phrase: 'Um revolucionário pode perder tudo: a família, a liberdade, até a vida. Menos a moral.',
+              font: 'O Pensador',
             },
           } : store?.word_2,
           word_3: curTab === 3 ? {
-            answers: checkIfWon() ? 6 : cRowAux,
-            status: checkIfWon() ? 'won' : cRowAux === NUMBER_OF_TRIES ? 'lost' : 'playing',
+            answers: cRowAux,
+            status: won ? 'won' : cRowAux === NUMBER_OF_TRIES ? 'lost' : 'playing',
             tries: updatedRows,
             word: store?.word_3?.word,
-            grammatical_class: '',
-            meaning: '',
-            synonyms: [''],
+            grammatical_class: 'substantivo feminino',
+            meaning: 'objeto esférico ou ovoide, de espécie e matéria várias, maciço ou cheio de ar comprimido, us. em certos jogos ou esportes para ser chutado, batido ou lançado.',
+            synonyms: ['globo', 'esfera', 'pelota'],
             antonyms: [''],
             phrase: {
-              author: '',
-              phrase: '',
-              font: '',
+              author: 'Armando Nogueira',
+              phrase: 'Se Pelé não tivesse nascido homem, teria nascido bola.',
+              font: 'O Pensador',
             },
           } : store?.word_3,
           word_4: curTab === 4 ? {
-            answers: checkIfWon() ? 6 : cRowAux,
-            status: checkIfWon() ? 'won' : cRowAux === NUMBER_OF_TRIES ? 'lost' : 'playing',
+            answers: cRowAux,
+            status: won ? 'won' : cRowAux === NUMBER_OF_TRIES ? 'lost' : 'playing',
             tries: updatedRows,
             word: store?.word_4?.word,
-            grammatical_class: '',
-            meaning: '',
-            synonyms: [''],
-            antonyms: [''],
+            grammatical_class: 'substantivo masculino',
+            meaning: 'estrela que faz parte da Via Láctea e que é o centro do sistema planetário, do qual participa a Terra',
+            synonyms: ['claridade', 'aurora', 'brilho'],
+            antonyms: ['escuro', 'noite'],
             phrase: {
-              author: '',
-              phrase: '',
-              font: '',
+              author: 'Confúcio',
+              phrase: 'Até que o sol não brilhe, acendamos uma vela na escuridão.',
+              font: 'O Pensador',
             },
           } : store?.word_4,
         };
         storeData(aux);
+        checkGameState(totalTries);
       }
 
       return;
@@ -528,22 +563,14 @@ export const Home = () => {
   };
 
   return (
-    // loading
-    //   ?
-      <>
+    <>
       <Header />
-
-      {/* <View style={{flexDirection: 'row', padding: 5}}>
-        <Pressable><Text style={styles.controlText}>{'<'}</Text></Pressable>
-        <Text style={styles.controlText}> de </Text>
-        <Pressable><Text style={styles.controlText}>{'>'}</Text></Pressable>
-      </View> */}
 
       <View style={styles.paginationContainer}>
         {renderPaginationButtons()}
       </View>
 
-      <Text style={styles.header}>Palavra {curTab + 1} de 5</Text>
+      {/* <Text style={styles.header}>Palavra {curTab + 1} de 5</Text> */}
 
       <ScrollView style={styles.map}>
         {rows?.map((row: any, i: number) => (
@@ -571,33 +598,34 @@ export const Home = () => {
         }
 
         <View style={styles.wordPlacar}>
-          <Text style={styles.wordPlacarTitle}>{curRow > 5 ? '' : `Tentativa ${curRow + 1} de 5`}</Text>
-          {
-            gameState === 'won'
-              ? <Text style={styles.wordPlacarInfo}>✅ Você acertou na {curRow} tentativa.</Text>
+          <Text style={styles.wordPlacarTitle}>{curRow > 5 || getCurStatus(curTab) === '✔️' || getCurStatus(curTab) === '❌' ? '' : `Tentativa ${curRow + 1} de 5`}</Text>
+          {/* {
+            getCurStatus(curTab) === '✔️'
+              ? <Text style={styles.wordPlacarInfo}>✅ Você acertou na {curRow}ª tentativa.</Text>
               : <></>
-          }
+          } */}
           {
             getCurStatus(curTab) === '✔️' && curRow > 0
-            ? <Text style={[styles.wordPlacarInfo, {fontSize: 18}]}>Uhull Você acertou!!! 😎</Text>
+            // ? <Text style={styles.wordPlacarInfo}>Uhull Você acertou!!! 😎</Text>
+            ? <Text style={styles.wordPlacarInfo}>✅ Você acertou na {curRow}ª tentativa.</Text>
             : getCurStatus(curTab) === '❌'
-              ? <Text style={[styles.wordPlacarInfo, {fontSize: 18}]}>{curRow === 1 ? `❌ Você já desperdiçou ${curRow} tentativa` : `❌ Você já desperdiçou ${curRow} tentativas`}</Text>
-              : <Text style={[styles.wordPlacarInfo, {fontSize: 18}]}>💪 Boraaa!!! Que palavra é essa?</Text>
+              ? <Text style={styles.wordPlacarInfo}>{curRow === 1 ? `❌ Você já desperdiçou ${curRow} tentativa` : `❌ Você já desperdiçou as ${curRow} tentativas 😔`}</Text>
+              : <Text style={styles.wordPlacarInfo}>💪 Boraaa!!! Que palavra é essa?</Text>
           }
         </View>
       </ScrollView>
 
       <View style={styles.rowButtons}>
-        <TouchableOpacity style={styles.btnShare}>
+        <TouchableOpacity style={styles.btnShare} onPress={shareScore} disabled={gameState === 'finished'}>
           <Share2 strokeWidth={2} width={25} height={25} color={colors.wrong}/>
         </TouchableOpacity>
+        <Text style={styles.wordPlacarInfo}>Pontos {store?.points ?? 0}</Text>
         <TouchableOpacity style={styles.btnShare}>
-          <Info strokeWidth={2} width={25} height={25} color={colors.wrong}/>
+          <HelpCircle strokeWidth={2} width={25} height={25} color={colors.wrong}/>
         </TouchableOpacity>
       </View>
 
-      <Keypad onKeyPressed={onKeyPressed} greenCaps={greenCaps} greyCaps={greyCaps} yellowCaps={yellowCaps} />
+      <Keypad onKeyPressed={onKeyPressed} greenCaps={greenCaps} greyCaps={greyCaps} yellowCaps={yellowCaps} alreadyHit={getCurStatus(curTab) === '✔️'}/>
     </>
-    // : <></>
   );
 };

@@ -80,13 +80,14 @@ export const styles = StyleSheet.create({
   },
   wordPlacarInfo: {
     color: 'black',
+    fontSize: 18,
   },
   paginationContainer: {
     //flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: adjust(5),
+    paddingTop: adjust(10),
     paddingHorizontal: adjust(5),
     // backgroundColor: 'transparent',
   },
@@ -122,6 +123,7 @@ export const styles = StyleSheet.create({
   rowButtons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     width: '100%',
     paddingHorizontal: 10,
     marginBottom: 10,

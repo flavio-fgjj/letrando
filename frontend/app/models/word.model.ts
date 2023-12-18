@@ -10,8 +10,8 @@ export class Word {
   answers: number | undefined;
   grammatical_class: string | undefined;
   meaning: string | undefined;
-  synonyms: [string] | undefined;
-  antonyms: [string] | undefined;
+  synonyms: string[] | undefined;
+  antonyms: string[] | undefined;
   phrase:
     | {
         author: string;
@@ -25,6 +25,9 @@ export class WordsStorage {
   date: string | undefined;
   words: string[] | undefined;
   status: string | undefined;
+  points: number | undefined;
+  hits: number | undefined;
+  misses: number | undefined;
   word_0: Word | undefined;
   word_1: Word | undefined;
   word_2: Word | undefined;
